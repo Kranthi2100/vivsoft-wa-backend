@@ -35,7 +35,8 @@ http
       }
     } catch (error) {
       console.error(error);
-      return res.status(500);
+      res.writeHead(500);
+      return res.end();
     }
   })
   .listen(8080); //the server object listens on port 8080
