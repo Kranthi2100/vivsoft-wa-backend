@@ -33,7 +33,7 @@ app.get("/", cors(), async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(500);
+    return res.sendStatus(500);
   }
 });
 
