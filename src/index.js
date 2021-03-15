@@ -1,5 +1,6 @@
-var http = require("http");
+var app = require("express")();
 var fetch = require("isomorphic-fetch");
+var cors = require('cors')
 
 const API = `https://api.weatherapi.com/v1/forecast.json?key=${process.env.key}&q=20171&days=1`;
 
@@ -12,16 +13,14 @@ function parseHourlyForcast(data) {
   }));
 }
 
-http
-  .createServer(async function (req, res) {
+app.get('/', cors(), async (req, res) {
     try {
       const apiRes = await fetch(API);
 
       if (apiRes.status === 200) {
         const weatherData = await apiRes.json();
 
-        res.setHeader("Content-Type", "application/json");
-        res.writeHead(200);
+        
         const data = {
           current: {
             temp_f: weatherData.current.temp_f
@@ -29,14 +28,14 @@ http
           forecast: parseHourlyForcast(weatherData)
         };
 
-        res.end(JSON.stringify(data));
+        return res.status(200).json(data);
       } else {
         throw new Error("status not handled");
       }
     } catch (error) {
       console.error(error);
-      res.writeHead(500);
-      return res.end();
+      return res.status(500);
     }
   })
-  .listen(8080); //the server object listens on port 8080
+
+app.listen(8080); //the server object listens on port 8080
